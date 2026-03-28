@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'k8s' }
+    agent { label 'K8s' }
 
     environment {
         PIP_CACHE_DIR = "${WORKSPACE}/.pip-cache"
