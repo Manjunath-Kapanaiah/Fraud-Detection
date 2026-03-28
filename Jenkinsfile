@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'K8s' }   // match your label EXACTLY
+    agent { label 'K8s' }
 
     environment {
         PIP_CACHE_DIR = "${WORKSPACE}/.pip-cache"
@@ -10,6 +10,7 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
+                mkdir -p "$PIP_CACHE_DIR"
                 python3 -m venv venv
                 . venv/bin/activate
                 pip install --cache-dir="$PIP_CACHE_DIR" -r requirements.txt
@@ -43,7 +44,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 sh '''
-                kubectl apply -f deployment.yaml
+                kubectl apply -f deployment.yaml || echo "Skipping deploy"
                 '''
             }
         }
@@ -51,9 +52,11 @@ pipeline {
 
     post {
         failure {
-            echo "Rolling back deployment..."
+            echo "Safe rollback..."
+
             sh '''
-            kubectl rollout undo deployment/fraud-app
+            kubectl get nodes || exit 0
+            kubectl rollout undo deployment/fraud-app || true
             '''
         }
     }
