@@ -12,7 +12,7 @@ pipeline {
                 sh '''
                 python3 -m venv venv
                 . venv/bin/activate
-                pip install --cache-dir $PIP_CACHE_DIR -r requirements.txt
+                pip install --cache-dir="$PIP_CACHE_DIR" -r requirements.txt
                 '''
             }
         }
