@@ -1,5 +1,5 @@
 name: Transaction CI/CD
-on: workflow_dispatch
+
 on:
   push:
     branches: [ main ]
