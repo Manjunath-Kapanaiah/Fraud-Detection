@@ -67,3 +67,13 @@ jobs:
 
     steps:
       - run: echo "Deploying to PRODUCTION"
+
+      curl -X POST https://api.github.com/repos/<your-username>/transaction-service/dispatches \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer <TOKEN>" \
+  -d '{
+    "event_type": "fraud-check",
+    "client_payload": {
+      "status": "success"
+    }
+  }'
