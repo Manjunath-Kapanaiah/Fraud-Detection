@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'K8s' }
+    agent { label 'K8s' }   // match your label EXACTLY
 
     environment {
         PIP_CACHE_DIR = "${WORKSPACE}/.pip-cache"
@@ -7,13 +7,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/your-repo/fraud-detection.git'
-            }
-        }
-
-        stage('Install Dependencies (with caching)') {
+        stage('Install Dependencies') {
             steps {
                 sh '''
                 python3 -m venv venv
@@ -46,7 +40,7 @@ pipeline {
             }
         }
 
-        stage('Deploy to Kubernetes') {
+        stage('Deploy') {
             steps {
                 sh '''
                 kubectl apply -f deployment.yaml
@@ -57,8 +51,7 @@ pipeline {
 
     post {
         failure {
-            echo "Deployment failed! Rolling back..."
-
+            echo "Rolling back deployment..."
             sh '''
             kubectl rollout undo deployment/fraud-app
             '''
